@@ -1,0 +1,15 @@
+[package]
+name = "EXP_Rust_Monitoring_Host"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.8"
+chrono = "0.4.43"
+dotenvy = "0.15.7"
+rand = "0.10.0"
+reqwest = {version = "0.13.2", features = ["json"]}
+serde = {version = "1.0.228", features=["derive"]}
+serde_json = "1.0.149"
+sysinfo = "0.38.2"
+tokio = {version = "1.49.0", features = ["full"]}
