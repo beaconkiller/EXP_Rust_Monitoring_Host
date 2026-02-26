@@ -20,6 +20,7 @@ pub struct StrClientData {
     pub inc_status: Option<i32>,
     pub disk_data: Option<Vec<StrDiskInfo>>,
     pub cpu_info: Option<Vec<StrCpuInfo>>,
+    pub ram_info: Option<StrRamInfo>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -36,6 +37,13 @@ pub struct StrCpuInfo {
     pub cpu_usage: String,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct StrRamInfo {
+    pub memory_total: u64,
+    pub memory_used: u64,
+    pub percent: String,
+}
+
 impl WkClients {
     pub fn new(addr: String) -> Self {
         Self {
@@ -46,6 +54,7 @@ impl WkClients {
                 disk_data: None,
                 inc_addr: None,
                 inc_status: None,
+                ram_info: None,
             }),
         }
     }
@@ -96,19 +105,15 @@ impl WkClients {
     }
 
     fn map_data(&self, resp_res: HashMap<String, Value>) {
-        // println!();
-        // println!("{:?}", " --------- resp_res ---------");
-        // println!("{:?}", " --------- resp_res ---------");
-        // println!("{:?}", " --------- resp_res ---------");
-        // println!();
         // println!("{:?}", resp_res);
-        // println!();
 
         let resp_res = Value::from(resp_res["data"].clone());
         let arr_disks: Vec<StrDiskInfo> =
             serde_json::from_value(resp_res["data"]["disk_info"].clone()).unwrap_or_default();
         let arr_cpus: Vec<StrCpuInfo> =
             serde_json::from_value(resp_res["data"]["cpu_info"].clone()).unwrap_or_default();
+        let ram_info: Option<StrRamInfo> =
+            serde_json::from_value(resp_res["data"]["mem_info"].clone()).unwrap_or_default();
 
         // println!("{:#?}", resp_res);
 
@@ -117,6 +122,7 @@ impl WkClients {
             inc_status: None,
             cpu_info: Some(arr_cpus),
             disk_data: Some(arr_disks),
+            ram_info: ram_info,
         };
 
         let mut init_data = self.data.lock().unwrap();

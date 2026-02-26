@@ -26,19 +26,21 @@ impl ContGetInfo {
         println!("{:?}", addr);
 
         let x = GL_ARR_CLIENTS.lock().unwrap().clone();
-
         let mut arr_data: Vec<StrGetInfo> = Vec::new();
-
         for el in &x {
             arr_data.push(el.get_info());
         }
 
-        println!("{:#?}", x);
+        // println!("{:#?}", x);
 
-        Json(ApiResponse {
+        let resp = ApiResponse {
             status: 200,
             data: arr_data,
             message: "success".to_string(),
-        })
+        };
+
+        // println!("{:?}", resp);
+
+        Json(resp)
     }
 }
