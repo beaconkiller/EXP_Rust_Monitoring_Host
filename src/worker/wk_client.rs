@@ -7,11 +7,11 @@ use std::{
     time::Duration,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct WkClients {
-    pub addr: Mutex<String>,
-    pub status: Mutex<i32>,
-    pub data: Mutex<StrClientData>,
+    pub addr: Arc<Mutex<String>>,
+    pub status: Arc<Mutex<i32>>,
+    pub data: Arc<Mutex<StrClientData>>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -47,15 +47,15 @@ pub struct StrRamInfo {
 impl WkClients {
     pub fn new(addr: String) -> Self {
         Self {
-            addr: Mutex::new(addr.to_string()),
-            status: Mutex::new(0),
-            data: Mutex::new(StrClientData {
+            addr: Arc::new(Mutex::new(addr.to_string())),
+            status: Arc::new(Mutex::new(0)),
+            data: Arc::new(Mutex::new(StrClientData {
                 cpu_info: None,
                 disk_data: None,
                 inc_addr: None,
                 inc_status: None,
                 ram_info: None,
-            }),
+            })),
         }
     }
 

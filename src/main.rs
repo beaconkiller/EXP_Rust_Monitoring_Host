@@ -8,23 +8,22 @@ mod worker;
 
 use std::sync::{Arc, Mutex};
 
-use crate::global::LL_global;
+use crate::global::LL_global::{self, GL_SRV_CLIENT_CONTROL};
+use crate::services::service_client_control::SrvCLientControl;
 use crate::worker::wk_client::StrClientData;
 
 #[tokio::main]
 async fn main() {
     LL_global::LLGlobal::set_global();
 
-    let cl_a = Arc::new(worker::wk_client::WkClients::new(
+    let arr_clients: Vec<String> = vec![
         "192.168.100.205:2109".to_string(),
-    ));
+        "192.168.100.68:2109".to_string(),
+    ];
 
-    cl_a.clone().init_worker();
-
-    {
-        let mut arr_clients = LL_global::GL_ARR_CLIENTS.lock().unwrap();
-        arr_clients.push(cl_a);
-    }
+    let SrvClCtl = GL_SRV_CLIENT_CONTROL.clone();
+    SrvClCtl.add_client(arr_clients).await;
+    SrvClCtl.init().await;
 
     services::service_web::SrvWeb::init().await;
 
