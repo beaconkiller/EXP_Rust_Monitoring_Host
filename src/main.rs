@@ -25,16 +25,16 @@ async fn main() {
 
     LL_global::LLGlobal::set_global();
 
-    let arr_clients: Vec<String> = vec![
-        "192.168.100.205:2109".to_string(),
-        "192.168.100.68:2109".to_string(),
-    ];
+    // let arr_clients: Vec<String> = vec![
+    //     "192.168.100.205:2109".to_string(),
+    //     "192.168.100.68:2109".to_string(),
+    // ];
 
-    let SrvClCtl = GL_SRV_CLIENT_CONTROL.clone();
-    SrvClCtl.add_client(arr_clients).await;
-    SrvClCtl.init().await;
+    // let SrvClCtl = GL_SRV_CLIENT_CONTROL.clone();
+    // SrvClCtl.add_client(arr_clients).await;
+    // SrvClCtl.init().await;
 
-    SrvClCtl.get_all_data().await;
+    // SrvClCtl.get_all_data().await;
 
     services::service_web::SrvWeb::init().await;
 }

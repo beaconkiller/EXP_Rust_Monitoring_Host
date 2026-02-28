@@ -1,5 +1,5 @@
 use crate::{
-    controllers::cont_get_info::StrGetInfo,
+    controllers::{cont_get_info::StrGetInfo, cont_worker::StrWorkerStatus},
     global::LL_global::{self, GL_SRV_CLIENT_CONTROL},
     models::model_api_response::ApiResponse,
     worker::{self, wk_client::WkClients},
@@ -48,6 +48,25 @@ impl SrvCLientControl {
     pub async fn add_client(&self, arr_ip: Vec<String>) {
         let mut arr = self.clients.lock().await;
         *arr = arr_ip;
+    }
+
+    pub async fn get_all_workers(&self) -> Vec<StrWorkerStatus> {
+        let arr_workers = self.workers.lock().await.clone();
+
+        let mut arr_tmp: Vec<StrWorkerStatus> = vec![];
+        for el in arr_workers {
+            let addr = el.addr.lock().unwrap().clone();
+            let last_success = el.data.lock().unwrap().last_success.clone();
+            let status = el.status.lock().unwrap().clone();
+            let worker_status = StrWorkerStatus {
+                addr: Some(addr),
+                last_success: last_success,
+                status: Some(status),
+            };
+            arr_tmp.push(worker_status);
+        }
+
+        arr_tmp
     }
 
     pub async fn get_all_data(&self) -> Vec<StrGetInfo> {

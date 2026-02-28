@@ -1,10 +1,13 @@
 use crate::{
     constant::var_constant::{StrConfig, VarConstant},
-    controllers::cont_get_info::ContGetInfo,
+    controllers::{cont_get_info::ContGetInfo, cont_worker::ContWorker},
     services::service_routes::SrvRoutes,
 };
 
-use axum::{Router, middleware, routing::get};
+use axum::{
+    Router, middleware,
+    routing::{get, post},
+};
 use tokio;
 
 pub struct SrvWeb;
@@ -22,7 +25,8 @@ impl SrvWeb {
         // let arr_routes: Vec<fn(Router) -> Router> = service_routes::SrvRoutes::get_routes();
 
         app = app.route("/get_info_by_addr", get(ContGetInfo::get_info_by_addr));
-        app = app.route("/get_info_by_addr2", get(ContGetInfo::get_info_by_addr));
+        app = app.route("/get_workers", get(ContWorker::get_workers));
+        app = app.route("/add_new_addr", post(ContWorker::add_new_addr));
 
         // =====================================================================
         // ======================= ASSIGN THE MIDDLEWARE =======================

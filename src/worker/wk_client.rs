@@ -80,7 +80,7 @@ impl WkClients {
                     let resp = match self::WkClients::get_monitoring_data(x.to_string()).await {
                         Ok(data) => data,
                         Err(e) => {
-                            println!("{:?}", e);
+                            // println!("{:?}", e);
                             let mut init_data = self.status.lock().unwrap();
                             *init_data = i32::from(500);
                             HashMap::from([("data".to_string(), Value::from(()))])
