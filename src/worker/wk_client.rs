@@ -1,4 +1,5 @@
 use crate::controllers::cont_get_info::StrGetInfo;
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{
@@ -21,6 +22,7 @@ pub struct StrClientData {
     pub disk_data: Option<Vec<StrDiskInfo>>,
     pub cpu_info: Option<Vec<StrCpuInfo>>,
     pub ram_info: Option<StrRamInfo>,
+    pub last_success: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -55,6 +57,7 @@ impl WkClients {
                 inc_addr: None,
                 inc_status: None,
                 ram_info: None,
+                last_success: None,
             })),
         }
     }
@@ -67,11 +70,6 @@ impl WkClients {
         }
     }
 
-    pub fn get_latest_data(&self) -> &WkClients {
-        println!("{:?}", self);
-        self
-    }
-
     pub fn init_worker(self: Arc<Self>) {
         tokio::spawn(async move {
             println!("Worker started for {}", self.addr.lock().unwrap());
@@ -82,6 +80,7 @@ impl WkClients {
                     let resp = match self::WkClients::get_monitoring_data(x.to_string()).await {
                         Ok(data) => data,
                         Err(e) => {
+                            println!("{:?}", e);
                             let mut init_data = self.status.lock().unwrap();
                             *init_data = i32::from(500);
                             HashMap::from([("data".to_string(), Value::from(()))])
@@ -104,28 +103,50 @@ impl WkClients {
         Ok(response)
     }
 
-    fn map_data(&self, resp_res: HashMap<String, Value>) {
-        // println!("{:?}", resp_res);
+    pub fn get_current_time(&self) -> String {
+        let now = Utc::now();
+        let iso_string = now.to_rfc3339();
+        let parts: Vec<&str> = iso_string.split('.').collect();
+        let str_0: &str = parts[0];
 
+        str_0.to_string()
+    }
+
+    fn map_data(&self, resp_res: HashMap<String, Value>) {
         let resp_res = Value::from(resp_res["data"].clone());
-        let arr_disks: Vec<StrDiskInfo> =
+
+        let arr_disks: Option<Vec<StrDiskInfo>> =
             serde_json::from_value(resp_res["data"]["disk_info"].clone()).unwrap_or_default();
-        let arr_cpus: Vec<StrCpuInfo> =
+        let arr_cpus: Option<Vec<StrCpuInfo>> =
             serde_json::from_value(resp_res["data"]["cpu_info"].clone()).unwrap_or_default();
         let ram_info: Option<StrRamInfo> =
             serde_json::from_value(resp_res["data"]["mem_info"].clone()).unwrap_or_default();
 
-        // println!("{:#?}", resp_res);
+        let last_success = { self.data.lock().unwrap().last_success.clone() };
 
-        let final_data: StrClientData = StrClientData {
-            inc_addr: Some(resp_res["addr"].to_string()),
-            inc_status: None,
-            cpu_info: Some(arr_cpus),
-            disk_data: Some(arr_disks),
-            ram_info: ram_info,
+        let final_data = if arr_disks.is_none() || arr_cpus.is_none() || ram_info.is_none() {
+            StrClientData {
+                inc_addr: Some(resp_res["addr"].to_string()),
+                inc_status: None,
+                cpu_info: arr_cpus,
+                disk_data: arr_disks,
+                ram_info: ram_info,
+                last_success: last_success,
+            }
+        } else {
+            StrClientData {
+                inc_addr: Some(resp_res["addr"].to_string()),
+                inc_status: None,
+                cpu_info: arr_cpus,
+                disk_data: arr_disks,
+                ram_info: ram_info,
+                last_success: Some(self.get_current_time()),
+            }
         };
 
-        let mut init_data = self.data.lock().unwrap();
-        *init_data = final_data
+        {
+            let mut init_data = self.data.lock().unwrap();
+            *init_data = final_data.clone();
+        }
     }
 }

@@ -6,7 +6,9 @@ mod models;
 mod services;
 mod worker;
 
+use chrono::{self, DateTime, Utc};
 use std::sync::{Arc, Mutex};
+use std::time::SystemTime;
 
 use crate::global::LL_global::{self, GL_SRV_CLIENT_CONTROL};
 use crate::services::service_client_control::SrvCLientControl;
@@ -14,6 +16,13 @@ use crate::worker::wk_client::StrClientData;
 
 #[tokio::main]
 async fn main() {
+    let time = SystemTime::now();
+    let dt: DateTime<Utc> = time.clone().into();
+    let ISOstr = format!("{}", dt.format("%+"));
+
+    println!("{:?}", time);
+    println!("{:?}", ISOstr);
+
     LL_global::LLGlobal::set_global();
 
     let arr_clients: Vec<String> = vec![
@@ -25,17 +34,7 @@ async fn main() {
     SrvClCtl.add_client(arr_clients).await;
     SrvClCtl.init().await;
 
+    SrvClCtl.get_all_data().await;
+
     services::service_web::SrvWeb::init().await;
-
-    // loop {
-    //     cl_a.get_latest_data();
-    //     tokio::time::sleep(Duration::from_secs(1)).await;
-    // }
-
-    // SrvCLientControl::add_client("192.168.100.205:2109");
-    // SrvCLientControl::add_client("192.168.100.205:3200");
-
-    // println!("{:?}", LL_global::GL_ARR_CLIENTS.lock().unwrap());
-
-    // let x = SrvCLientControl::init().await;
 }

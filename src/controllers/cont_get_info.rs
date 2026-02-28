@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    global::LL_global::GL_ARR_CLIENTS, models::model_api_response::ApiResponse,
+    global::LL_global::GL_SRV_CLIENT_CONTROL, models::model_api_response::ApiResponse,
     worker::wk_client::StrClientData,
 };
 use axum::{Json, extract::Query};
@@ -21,17 +21,8 @@ impl ContGetInfo {
     pub async fn get_info_by_addr(
         Query(params): Query<HashMap<String, Value>>,
     ) -> Json<ApiResponse<Vec<StrGetInfo>>> {
-        let addr = params["addr"].as_str().unwrap();
-
-        println!("{:?}", addr);
-
-        let x = GL_ARR_CLIENTS.lock().unwrap().clone();
-        let mut arr_data: Vec<StrGetInfo> = Vec::new();
-        for el in &x {
-            arr_data.push(el.get_info());
-        }
-
-        // println!("{:#?}", x);
+        println!("{:?}", params);
+        let arr_data = GL_SRV_CLIENT_CONTROL.get_all_data().await;
 
         let resp = ApiResponse {
             status: 200,

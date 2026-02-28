@@ -1,17 +1,6 @@
-use std::{
-    collections::HashMap,
-    sync::{Arc, LazyLock, Mutex},
-};
+use std::sync::{Arc, LazyLock};
 
 use crate::services::service_client_control::SrvCLientControl;
-use crate::worker::wk_client::WkClients;
-use serde_json::Value;
-
-pub static GL_ARR_CLIENTS: LazyLock<Mutex<Vec<Arc<WkClients>>>> =
-    LazyLock::new(|| Mutex::new(Vec::new()));
-
-pub static GL_ARR_GET_DATA: LazyLock<Mutex<Vec<HashMap<String, Value>>>> =
-    LazyLock::new(|| Mutex::new(Vec::new()));
 
 pub static GL_SRV_CLIENT_CONTROL: LazyLock<Arc<SrvCLientControl>> = LazyLock::new(|| {
     Arc::new(SrvCLientControl {
