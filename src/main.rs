@@ -25,6 +25,10 @@ async fn main() {
 
     LL_global::LLGlobal::set_global();
 
+    GL_SRV_CLIENT_CONTROL.add_client(vec!["127.0.0.1:2109".to_string()]).await;
+    GL_SRV_CLIENT_CONTROL.init().await;
+
+
     // let arr_clients: Vec<String> = vec![
     //     "192.168.100.205:2109".to_string(),
     //     "192.168.100.68:2109".to_string(),
