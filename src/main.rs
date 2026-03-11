@@ -25,20 +25,26 @@ async fn main() {
 
     LL_global::LLGlobal::set_global();
 
-    GL_SRV_CLIENT_CONTROL.add_client(vec!["127.0.0.1:2109".to_string()]).await;
+    // =================================================
+    // ============= STARTING HOST SERVICE =============
+    // =================================================
+
+    // ----- OPTIONALLY ADD INITIALIZATION WORKER ------
+
+    GL_SRV_CLIENT_CONTROL
+        .add_client(vec![
+            // "127.0.0.1:2109".to_string(),
+            "202.74.75.24:2109".to_string(),
+        ])
+        .await;
+
+    // --------- ACTUALLY STARTING THE WORKER ----------
+
     GL_SRV_CLIENT_CONTROL.init().await;
 
-
-    // let arr_clients: Vec<String> = vec![
-    //     "192.168.100.205:2109".to_string(),
-    //     "192.168.100.68:2109".to_string(),
-    // ];
-
-    // let SrvClCtl = GL_SRV_CLIENT_CONTROL.clone();
-    // SrvClCtl.add_client(arr_clients).await;
-    // SrvClCtl.init().await;
-
-    // SrvClCtl.get_all_data().await;
+    // =================================================
+    // ============= STARTING WEB SERVICE ==============
+    // =================================================
 
     services::service_web::SrvWeb::init().await;
 }

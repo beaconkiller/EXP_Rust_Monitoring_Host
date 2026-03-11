@@ -13,6 +13,7 @@ pub struct WkClients {
     pub addr: Arc<Mutex<String>>,
     pub status: Arc<Mutex<i32>>,
     pub data: Arc<Mutex<StrClientData>>,
+    pub interv: Arc<Mutex<u64>>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -60,13 +61,14 @@ impl WkClients {
         Self {
             addr: Arc::new(Mutex::new(addr.to_string())),
             status: Arc::new(Mutex::new(0)),
+            interv: Arc::new(Mutex::new(2000 as u64)),
             data: Arc::new(Mutex::new(StrClientData {
                 cpu_info: None,
                 disk_data: None,
                 inc_addr: None,
                 inc_status: None,
                 ram_info: None,
-                pm2_info:None,
+                pm2_info: None,
                 last_success: None,
             })),
         }
@@ -99,7 +101,10 @@ impl WkClients {
                     // println!("{:?}", resp);
                     Self::map_data(&self, resp);
                 }
-                tokio::time::sleep(Duration::from_millis(1000)).await;
+
+                let dur = self.interv.lock().unwrap().clone();
+
+                tokio::time::sleep(Duration::from_millis(dur)).await;
             }
         });
     }
@@ -127,7 +132,7 @@ impl WkClients {
         let resp_res = Value::from(resp_res["data"].clone());
 
         println!("{:?}", " --------- resp_res --------- ");
-        println!("{:?}", resp_res["data"]["pm2_info"]);
+        println!("{:#?}", &resp_res["data"]);
 
         // ===============================================
         // ================ MAP SYS DATA =================
@@ -143,16 +148,17 @@ impl WkClients {
         // ===============================================
         // ================ MAP PM2 DATA =================
         // ===============================================
-        
-        let pm2_info : Option<Vec<StrPM2Info>> = serde_json::from_value(resp_res["data"]["pm2_info"].clone()).unwrap_or_default();
-        
-        
+
+        let pm2_info: Option<Vec<StrPM2Info>> =
+            serde_json::from_value(resp_res["data"]["pm2_info"].clone()).unwrap_or_default();
+
         // ===============================================
         // ===============================================
-        
+
         let last_success = { self.data.lock().unwrap().last_success.clone() };
 
-        let final_data = if arr_disks.is_none() || arr_cpus.is_none() || ram_info.is_none() {
+        let final_data = if true {
+            // let final_data = if arr_disks.is_none() || arr_cpus.is_none() || ram_info.is_none() {
             StrClientData {
                 inc_addr: Some(resp_res["addr"].to_string()),
                 inc_status: None,
