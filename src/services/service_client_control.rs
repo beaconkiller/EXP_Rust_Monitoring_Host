@@ -70,11 +70,12 @@ impl SrvCLientControl {
     }
 
     pub async fn get_all_data(&self) -> Vec<StrGetInfo> {
+        println!("{:?}", " =========== get_all_data(&self) =========== ");
+
         let SrvClCtl = GL_SRV_CLIENT_CONTROL.clone();
         let arr_workers = SrvClCtl.workers.lock().await;
 
-        println!("{:?}", " =========== arr_workers =========== ");
-        println!("{:?}", arr_workers);
+        println!("{:#?}", arr_workers);
 
         let mut arr_data: Vec<StrGetInfo> = vec![];
         for el in arr_workers.iter() {
