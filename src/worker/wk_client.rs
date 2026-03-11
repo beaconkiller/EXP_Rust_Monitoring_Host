@@ -131,8 +131,8 @@ impl WkClients {
     fn map_data(&self, resp_res: HashMap<String, Value>) {
         let resp_res = Value::from(resp_res["data"].clone());
 
-        println!("{:?}", " --------- resp_res --------- ");
-        println!("{:#?}", &resp_res["data"]);
+        // println!("{:?}", " --------- resp_res --------- ");
+        // println!("{:#?}", &resp_res["data"]);
 
         // ===============================================
         // ================ MAP SYS DATA =================
