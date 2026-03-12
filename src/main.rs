@@ -12,16 +12,26 @@ use std::time::SystemTime;
 
 use crate::global::LL_global::{self, GL_SRV_CLIENT_CONTROL};
 use crate::services::service_client_control::SrvCLientControl;
+use crate::services::service_transit_sess::SrvTransitSess;
 use crate::worker::wk_client::StrClientData;
 
 #[tokio::main]
 async fn main() {
-    let time = SystemTime::now();
-    let dt: DateTime<Utc> = time.clone().into();
-    let ISOstr = format!("{}", dt.format("%+"));
+    // =================================================
+    // ===================== DEBUG =====================
+    // =================================================
 
-    println!("{:?}", time);
-    println!("{:?}", ISOstr);
+    SrvTransitSess::get_qr_code("asdasdd");
+
+    // let time = SystemTime::now();
+    // let dt: DateTime<Utc> = time.clone().into();
+    // let ISOstr = format!("{}", dt.format("%+"));
+
+    // println!("{:?}", time);
+    // println!("{:?}", ISOstr);
+
+    // =================================================
+    // =================================================
 
     LL_global::LLGlobal::set_global();
 
