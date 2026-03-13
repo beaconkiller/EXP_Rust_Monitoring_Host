@@ -10,15 +10,6 @@ use crate::controllers::{cont_get_info::ContGetInfo, cont_worker::ContWorker};
 pub struct SrvRoutes;
 
 impl SrvRoutes {
-    pub fn _get_routes() -> Vec<fn(Router) -> Router> {
-        let arr_routes: Vec<fn(Router) -> Router> = vec![
-            |v| v.route("/get_info_by_addr", get(ContGetInfo::get_info_by_addr)),
-            |v| v.route("/get_workers", get(ContWorker::get_workers)),
-            |v| v.route("/add_new_addr", post(ContWorker::add_new_addr)),
-        ];
-
-        arr_routes
-    }
 
     pub async fn api_handler(req: Request<axum::body::Body>, next: Next) -> Response {
         println!("{} {}", req.method(), req.uri());
@@ -27,9 +18,32 @@ impl SrvRoutes {
     }
 
     pub fn apply_routes(mut router: Router) -> Router {
+
+        // ===============================================
+        // ==================== ROUTES ===================
+        // ===============================================
+
+
+        // ===============================================
+        // =================== SYSINFO ===================
+        // ===============================================
+
         router = router.route("/get_info_by_addr", get(ContGetInfo::get_info_by_addr));
         router = router.route("/get_workers", get(ContWorker::get_workers));
         router = router.route("/add_new_addr", post(ContWorker::add_new_addr));
+
+        // ===============================================
+        // =================== QR API ====================
+        // ===============================================
+
+        // router = router.route("/get_info_by_addr", get(ContGetInfo::get_info_by_addr));
+        // router = router.route("/get_workers", get(ContWorker::get_workers));
+        // router = router.route("/add_new_addr", post(ContWorker::add_new_addr));
+
+
+        // -----------------------------------------------
+        // ----------- RETURN THE FINAL ROUTER -----------
+        // -----------------------------------------------
 
         router
     }

@@ -10,7 +10,7 @@ use chrono::{self, DateTime, Utc};
 use std::sync::{Arc, Mutex};
 use std::time::SystemTime;
 
-use crate::global::LL_global::{self, GL_SRV_CLIENT_CONTROL};
+use crate::global::LL_global::{self, GL_SRV_CLIENT_CONTROL, GL_SRV_TRANSIT_SESS};
 use crate::services::service_client_control::SrvCLientControl;
 use crate::services::service_transit_sess::SrvTransitSess;
 use crate::worker::wk_client::StrClientData;
@@ -21,7 +21,10 @@ async fn main() {
     // ===================== DEBUG =====================
     // =================================================
 
-    SrvTransitSess::get_qr_code("asdasdd");
+    GL_SRV_TRANSIT_SESS.add_new_session("aosidj12309".to_string()).await;
+    GL_SRV_TRANSIT_SESS.get_all_sess().await;
+
+    // SrvTransitSess::get_qr_code("asdasdd");
 
     // let time = SystemTime::now();
     // let dt: DateTime<Utc> = time.clone().into();
@@ -38,7 +41,7 @@ async fn main() {
     // =================================================
     // ============= STARTING HOST SERVICE =============
     // =================================================
-
+  
     // ----- OPTIONALLY ADD INITIALIZATION WORKER ------
 
     GL_SRV_CLIENT_CONTROL
