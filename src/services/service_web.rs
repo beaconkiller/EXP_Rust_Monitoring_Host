@@ -51,7 +51,8 @@ impl SrvWeb {
         // ====================== ASSIGN THE CORS CONFIG =======================
         // =====================================================================
 
-        let cors = CorsLayer::new().allow_origin(Any);
+        let cors = CorsLayer::permissive();
+        // let cors = CorsLayer::new().allow_origin(Any);
         app = app.layer(cors);
 
         // =====================================================================

@@ -21,9 +21,6 @@ async fn main() {
     // ===================== DEBUG =====================
     // =================================================
 
-    GL_SRV_TRANSIT_SESS.add_new_session("aosidj12309".to_string()).await;
-    GL_SRV_TRANSIT_SESS.get_all_sess().await;
-
     // SrvTransitSess::get_qr_code("asdasdd");
 
     // let time = SystemTime::now();
@@ -41,7 +38,7 @@ async fn main() {
     // =================================================
     // ============= STARTING HOST SERVICE =============
     // =================================================
-  
+
     // ----- OPTIONALLY ADD INITIALIZATION WORKER ------
 
     GL_SRV_CLIENT_CONTROL

@@ -1,7 +1,9 @@
 use std::sync::{Arc, LazyLock, Mutex};
 use tokio::sync;
 
-use crate::services::{service_client_control::SrvCLientControl, service_transit_sess::SrvTransitSess};
+use crate::services::{
+    service_client_control::SrvCLientControl, service_transit_sess::SrvTransitSess,
+};
 
 pub static GL_SRV_CLIENT_CONTROL: LazyLock<Arc<SrvCLientControl>> = LazyLock::new(|| {
     Arc::new(SrvCLientControl {
@@ -11,9 +13,10 @@ pub static GL_SRV_CLIENT_CONTROL: LazyLock<Arc<SrvCLientControl>> = LazyLock::ne
     })
 });
 
-pub static GL_SRV_TRANSIT_SESS :LazyLock<Arc<SrvTransitSess>> = LazyLock::new(|| {
-    Arc::new(SrvTransitSess{
-        transit_data: tokio::sync::Mutex::new(vec![])
+pub static GL_SRV_TRANSIT_SESS: LazyLock<Arc<SrvTransitSess>> = LazyLock::new(|| {
+    Arc::new(SrvTransitSess {
+        transit_data: tokio::sync::Mutex::new(vec![]),
+        sess_lifespan: 10,
     })
 });
 

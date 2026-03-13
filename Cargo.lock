@@ -7,6 +7,7 @@ name = "EXP_Rust_Monitoring_Host"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "base64",
  "chrono",
  "dotenvy",
  "image",
